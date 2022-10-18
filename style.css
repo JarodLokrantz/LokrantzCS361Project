@@ -1,0 +1,110 @@
+/* General styles */
+body {
+	margin: 0;
+	background-color: #eee;
+}
+
+a {
+	text-decoration: none;
+}
+
+h1 {
+	margin: 0;
+	padding: 10px 20px;
+	font-size: 30px;
+	font-weight: 100;
+	background-color: #2e8020;
+	color: #fff;
+}
+
+/* Navbar styles */
+nav {
+	background-color: #fff;
+	font-size: 18px;
+	line-height: 22px;
+}
+
+nav ul {
+	margin: 0 0 0 20px;
+	padding: 0;
+}
+
+nav ul li {
+	display: inline-block;
+}
+
+nav ul li a {
+	padding: 8px 10px;
+	display: inline-block;
+	color: #292929;
+}
+
+nav ul li a:focus, nav ul li a:hover {
+	color: #319df6;
+}
+
+nav ul li#search-bar {
+	float: right;
+	margin-right: 20px;
+	padding: 0;
+	line-height: 38px;
+}
+
+/* Content styles */
+main article {
+	margin: 15px 25px;
+	padding: 5px;
+	background-color: #ffffff;
+}
+
+main article {
+	display: flex;
+}
+
+main article div.guide-partial-text-content{
+	flex: 0 1 80%;
+	margin-left: 10px;
+}
+
+main article div h3 {
+	margin: 0px 0px 20px 0px;
+}
+
+main article img {
+	width: 120px;
+	height: 80px;
+	display: block;
+	margin: auto;
+}
+
+/* Modal styles */
+div#modal-dimming-area {
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	z-index: 500;
+	background-color: rgba(0, 0, 0, 0.75);
+	position: fixed;
+}
+
+div#guide-creation-modal {
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	z-index: 500;
+	position: fixed;
+	width: 90%;
+	height: 90%;
+	background-color: #ffffff;
+	margin: auto;
+}
+
+div#guide-creation-modal * {
+	display: block;
+}
+
+.hidden{
+	display: none;
+}
