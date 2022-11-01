@@ -4,9 +4,6 @@ import csv
 
 
 def main():
-	dataFile = open("natureWalkData.csv")
-	natureWalkData = csv.reader(dataFile)
-
 	exit = False
 	while exit == False:
 		time.sleep(3)
@@ -22,24 +19,15 @@ def main():
 		request = parseRequest(requestText)
 					
 		requestFile.close()
-		print(request.results)
-	dataFile.close()
+		responseFile = open("natureWalkDataResponse.txt", "w")
+		for entry in request.results:
+			if entry is request.results[-1]:
+				responseFile.write("%s\n" % entry)
+			else:
+				responseFile.write("%s,\n" % entry)
+				
 
 def parseRequest(requestText):
-	""" request = []
-	currentWord = 0
-	for line in requestText:
-		lineWords = line.split(" ")
-		for i in range(lineWords.len()):
-			word = lineWords[i]
-			if word == "{" or word == "}":
-				continue
-			if word.endswith(":"):
-				#if the word defines an attribute or value of an attribute, save the word without the colon or comma.
-				word = word[:-1]
-
-			request[currentWord] = word
-	return request """
 
 	request = None
 	lines = requestText.splitlines()
@@ -67,18 +55,20 @@ def parseRequest(requestText):
 
 class FindNatureWalkQuery:
 	def __init__(self):
-		self.criteria = ["time", None, "distance", None, "Notes", None, "pictureURL", None]
+		self.criteria = ["entry_num", None, "time", None, "distance", None, "Notes", None, "pictureURL", None]
 		self.results = []
 	
 	def addCriteria(self, attribute, value):
-		if attribute == "time":
+		if attribute == "entry_num":
 			self.criteria[1] = value
-		elif attribute == "distance":
+		elif attribute == "time":
 			self.criteria[3] = value
-		elif attribute == "Notes":
+		elif attribute == "distance":
 			self.criteria[5] = value
-		elif attribute == "pictureURL":
+		elif attribute == "Notes":
 			self.criteria[7] = value
+		elif attribute == "pictureURL":
+			self.criteria[9] = value
 		else:
 			raise "attribute error"
 	
@@ -93,18 +83,27 @@ class FindNatureWalkQuery:
 		matchingQueries = []
 		for i in range(1, len(natureWalkData)):
 			numMatching = 0
+			print("time criteria: " + str(self.criteria[1]) + "; actual time: " + str(natureWalkData[i][0]))
+			print("distance criteria: " + str(self.criteria[3]) + "; actual time: " + str(natureWalkData[i][1]))
 			if self.criteria[1] is None or self.criteria[1] == natureWalkData[i][0]:
 				numMatching += 1
+				print("entry_num matches.")
 			if self.criteria[3] is None or self.criteria[3] == natureWalkData[i][1]:
 				numMatching += 1
+				print("Time matches.")
 			if self.criteria[5] is None or self.criteria[5] == natureWalkData[i][2]:
 				numMatching += 1
+				print("Distance matches.")
 			if self.criteria[7] is None or self.criteria[7] == natureWalkData[i][3]:
 				numMatching += 1
+				print("Notes matches.")
+			if self.criteria[9] is None or self.criteria[9] == natureWalkData[i][4]:
+				numMatching += 1
+				print("pictureURL matches.")
 
 			print(numMatching)
 
-			if numMatching == 2:
+			if numMatching == 5:
 				matchingQueries.append(natureWalkData[i])
 		
 		self.results = matchingQueries
@@ -114,7 +113,7 @@ class FindNatureWalkQuery:
 
 class NewNatureWalkQuery:
 	def __init__(self):
-		self.criteria = ["time", None, "distance", None, "Notes", None, "pictureURL", None]
+		self.criteria = ["entry_num", None, "time", None, "distance", None, "Notes", None, "pictureURL", None]
 	
 	def execute(self):
 		dataFile = open("natureWalkData.csv", "a")
