@@ -17,115 +17,153 @@ def main():
 
 		#Parse request if one has been made
 		request = parseRequest(requestText)
-					
+
+		#Close file for reading and clear it so duplicate requests aren't made
 		requestFile.close()
+		open("natureWalkDataRequest.txt", "w").close()
+
+		#if the request is to halt the microservice, quit the loop and end the program
+		if (request is None):
+			exit = True
+			continue
+		elif type(request) == str:
+			continue
+
+		#Write the results back to natureWalkDataResponse.txt
 		responseFile = open("natureWalkDataResponse.txt", "w")
 		for entry in request.results:
 			if entry is request.results[-1]:
 				responseFile.write("%s\n" % entry)
 			else:
 				responseFile.write("%s,\n" % entry)
+		responseFile.close()
 				
 
 def parseRequest(requestText):
-
 	request = None
 	lines = requestText.splitlines()
 
+	#determine the user's command and create an appropriate query object
 	requestName = lines[0].strip(" {")
-	print(requestName)
+	print(requestName.upper())
 	if requestName.upper() == "FIND":
 		request = FindNatureWalkQuery()
 	elif requestName.upper() == "NEW":
 		request = NewNatureWalkQuery()
+	elif requestName.upper() == "EXIT":
+		return request
+	else: 
+		print("\tInvalid command.")
+		return requestName
 	
-
-	line = 1
-	while lines[line] != "}":
-		lineWords = lines[line].split(" ")
-		attribute = lineWords[0].strip("\t:")
-		value = lineWords[1].strip(",")
-		print("Att: " + str(attribute) + "; Val: " + str(value))
-		request.addCriteria(attribute, value)
-		line += 1
+	#Add search/insert criteria to the query based on the data in the provided requestText
+	for line in lines[1:-1]:
+		cleanLine = line.strip("\t")
+		attributeValuePair = cleanLine.split(":")
+		attributeValuePair[1] = attributeValuePair[1].strip(" ,")
+		request.addCriteria(attributeValuePair[0], attributeValuePair[1])
 	
+	#Execute the query with the added criteria and return the fulfilled request object
 	request.execute()
 	return request
 
 
-class FindNatureWalkQuery:
+class NatureWalkQuery:
 	def __init__(self):
-		self.criteria = ["entry_num", None, "time", None, "distance", None, "Notes", None, "pictureURL", None]
+		self.criteria = {
+			"entry_num": None,
+			"time": None,
+			"distance": None,
+			"notes": None,
+			"pictureURL": None
+		}
 		self.results = []
-	
+
 	def addCriteria(self, attribute, value):
-		if attribute == "entry_num":
-			self.criteria[1] = value
-		elif attribute == "time":
-			self.criteria[3] = value
-		elif attribute == "distance":
-			self.criteria[5] = value
-		elif attribute == "Notes":
-			self.criteria[7] = value
-		elif attribute == "pictureURL":
-			self.criteria[9] = value
-		else:
-			raise "attribute error"
+		self.criteria[attribute] = value
+		return self
+
+
+class FindNatureWalkQuery(NatureWalkQuery):
+	def addCriteria(self, attribute, value):
+		self.criteria[attribute] = value
 	
 	def execute(self):
+		#Open and load CSV
 		dataFile = open("natureWalkData.csv")
 		natureWalkDataFile = csv.reader(dataFile)
 
+		#Create iterable list from CSV
 		natureWalkData = []
 		for row in natureWalkDataFile:
 			natureWalkData.append(row)
 
+		#Examine each entry for query matches
 		matchingQueries = []
 		for i in range(1, len(natureWalkData)):
-			numMatching = 0
-			print("time criteria: " + str(self.criteria[1]) + "; actual time: " + str(natureWalkData[i][0]))
-			print("distance criteria: " + str(self.criteria[3]) + "; actual time: " + str(natureWalkData[i][1]))
-			if self.criteria[1] is None or self.criteria[1] == natureWalkData[i][0]:
-				numMatching += 1
-				print("entry_num matches.")
-			if self.criteria[3] is None or self.criteria[3] == natureWalkData[i][1]:
-				numMatching += 1
-				print("Time matches.")
-			if self.criteria[5] is None or self.criteria[5] == natureWalkData[i][2]:
-				numMatching += 1
-				print("Distance matches.")
-			if self.criteria[7] is None or self.criteria[7] == natureWalkData[i][3]:
-				numMatching += 1
-				print("Notes matches.")
-			if self.criteria[9] is None or self.criteria[9] == natureWalkData[i][4]:
-				numMatching += 1
-				print("pictureURL matches.")
+			
+			#Create a dictionary out of the list element of natureWalkData that is currently being examined
+			keys = [label for label in natureWalkData[0]]
+			natureWalkDict = dict.fromkeys(keys)
+			idx = 0
+			for key in keys:
+				natureWalkDict.update({key: natureWalkData[i][idx]})
+				idx += 1
 
-			print(numMatching)
+			#Create a dictionary of all items whose keys are in both natureWalkDict and self.criteria and have the
+			# same value in both dictionaries (or the matching item in self.criteria is None)
+			shared_items = {k: natureWalkDict[k] for k in natureWalkDict if k in self.criteria and (natureWalkDict[k] == self.criteria[k] or self.criteria[k] is None)}
 
-			if numMatching == 5:
+			#If all attributes match or are None in the criteria, add the current nature walk to the list of
+			# matching queries.
+			if len(shared_items) == len(natureWalkData[0]):
 				matchingQueries.append(natureWalkData[i])
 		
+		#save the matching queries to results and close the file
 		self.results = matchingQueries
 		dataFile.close()
 
+		return self
 
 
-class NewNatureWalkQuery:
-	def __init__(self):
-		self.criteria = ["entry_num", None, "time", None, "distance", None, "Notes", None, "pictureURL", None]
-	
+
+class NewNatureWalkQuery(NatureWalkQuery):
 	def execute(self):
-		dataFile = open("natureWalkData.csv", "a")
+		#Open dataFile to count current number of entries for entry_num calculation
+		dataFile = open("natureWalkData.csv", "r")
+		csvFile = csv.reader(dataFile, delimiter=",")
+
+		newEntryNum = sum(1 for row in csvFile)
+		self.addCriteria("entry_num", str(newEntryNum))
+
+		dataFile.close()
+
+		#Open dataFile in which to append
+		dataFile = open("natureWalkData.csv", "a", newline="")
 		csvFile = csv.writer(dataFile, delimiter=",")
 		newCsvLine = []
 
-		for i in range(1, len(self.criteria), 2):
-			newCsvLine.append("" if self.criteria[i] is None else self.criteria[i])
+		#Create iterable from which to write the row
+		for val in self.criteria.values():
+			newCsvLine.append("" if val is None else val)
 
 		csvFile.writerow(newCsvLine)
-
 		dataFile.close()
+
+		#Test that the new entry is really in the datafile by performing a find query on it with the calculated new entry_num
+		testRequest = FindNatureWalkQuery()
+		testRequest.addCriteria("entry_num", str(newEntryNum))
+		testRequest.execute()
+
+		#Write to natureWalkDataResponse.txt the status of the NEW query based on the results of the find query above
+		if len(testRequest.results) > 0:
+			self.results.append("0")
+		else:
+			self.results.append("1")
+			self.results.append("There was an issue trying to add the new entry to the CSV file.")
+
+
+		return self
 
 if __name__ == "__main__":
 	main()

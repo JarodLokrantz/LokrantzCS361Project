@@ -3,3 +3,6 @@ entry_num,time,distance,notes,pictureURL
 2,0.5h,1mi,Morning jog heart-rate: 100bpm,
 3,7h,20mi,My feet hurt,images/trailheadSign.jpg
 4,7h,10mi,This walk was boring!,
+5,0.5h,4mi,This is the fastest I've ever run!,images/wornOutShoe.jpg
+6,40min,1mi,"Whew, I'm out of shape!",
+7,50min,2mi,,images/slug.jpg
