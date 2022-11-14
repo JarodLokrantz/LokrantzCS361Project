@@ -1,8 +1,5 @@
-entry_num,time,distance,notes,pictureURL
-1,1h,3mi,Saw a salamander and a garden snake,images/snake.jpg
-2,0.5h,1mi,Morning jog heart-rate: 100bpm,
-3,7h,20mi,My feet hurt,images/trailheadSign.jpg
-4,7h,10mi,This walk was boring!,
-5,0.5h,4mi,This is the fastest I've ever run!,images/wornOutShoe.jpg
-6,40min,1mi,"Whew, I'm out of shape!",
-7,50min,2mi,,images/slug.jpg
+entry_num,user_id,password,date,distance,duration,location_address,location_city,location_zip,location_state,location_country,notes,picture_name,picture_storage
+1,tom_sermit,Hy476t4t88pF,04-22-2022,4mi,2h,1734 Grok St.,Garden Home,89467,AK,USA,It was very cold.,ice.jpg,131072
+2,tom_sermit,Hy476t4t88pF,10-31-2022,3mi,4h,,,,,,Halloween nature walk! We went in our costumes and visited the houses of the people who lived in the area.,,
+3,howard_grim,kaglhbpiabc8,06-09-2022,0.5mi,0.5h,1734 Grok St.,Garden Home,89467,AK,USA,Do not listen to tom it is a very pleasant warm walk.,sun.jpg,148799
+4,nathaniel_smith,havpiq8g7wuib3ife8,08-09-2021,5mi,2h,,,97330,OR,USA,Personal best jogging time!,,

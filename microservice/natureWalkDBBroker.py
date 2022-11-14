@@ -1,5 +1,4 @@
 import time
-import os
 import csv
 
 
@@ -69,15 +68,32 @@ def parseRequest(requestText):
 
 
 class NatureWalkQuery:
-	def __init__(self):
+	""" def __init__(self):
 		self.criteria = {
 			"entry_num": None,
 			"time": None,
 			"distance": None,
 			"notes": None,
 			"pictureURL": None
+		} """
+	def __init__(self):
+		self.criteria = {
+			"entry_num": None,
+			"user_id": None,
+			"password": None,
+			"date": None,
+			"distance": None,
+			"duration": None,
+			"location_address": None,
+			"location_city": None,
+			"location_zip": None,
+			"location_state": None,
+			"location_country": None,
+			"notes": None,
+			"picture_name": None,
+			"picture_storage": None
 		}
-		self.results = []
+		self.results = [] 
 
 	def addCriteria(self, attribute, value):
 		self.criteria[attribute] = value
