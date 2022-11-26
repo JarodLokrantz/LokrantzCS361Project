@@ -1,4 +1,5 @@
 microservice/natureWalkDataRequest.txt
 microservice/natureWalkDataResponse.txt
 microservice/outdated-natureWalkData.csv
+node_modules
 .vscode
