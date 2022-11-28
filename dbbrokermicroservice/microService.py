@@ -39,7 +39,7 @@ def getDataBetweenPeakTime(lowTime, highTime):
 
 
 def insertData(newDate, newWaterTemp, newAirTemp, newTime):
-    cur.execute("INSERT INTO weather VALUES (" + "'" + str(newDate) + "'" + ", " + newWaterTemp + ", " + newAirTemp + ", " + str(newTime) + ")")
+    cur.execute("INSERT INTO weather VALUES (" + "'" + str(newDate) + "', " + newWaterTemp + ", " + newAirTemp + ", '" + str(newTime) + "')")
     conn.commit()
 
 
@@ -64,7 +64,7 @@ else:
 
 
 host = socket.gethostname()
-port = 5000
+port = 4005
 
 serverSocket = socket.socket()
 serverSocket.bind((host, port))
