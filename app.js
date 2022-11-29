@@ -18,6 +18,10 @@ var app = express()
 app.engine("handlebars", exphbrs.engine({ defaultLayout: "main" }))
 app.set("view engine", "handlebars")
 
+//Constant declarations
+const HOURS_IN_DAY = 24
+const MINUTES_BETWEEN_TIDAL_BULGES = 770 //12h 50m (6h 25m between tidal extremes)
+
 
 /**
  * Express server middleware functions
@@ -138,6 +142,8 @@ var job = cron.job("*/5 * * * * *", async function (){
 	console.log(hourlyForecastUrl)
 	var todaysHourlyForecast = await getTodaysHourlyForecast(hourlyForecastUrl)
 	console.log(todaysHourlyForecast)
+	var todaysTidalPredictions = await getTodaysTidalPredictions()
+	console.log(todaysTidalPredictions)
 })
 job.start()
 
@@ -171,6 +177,7 @@ function getHourlyForecastUrl(){
 
 
 function getTodaysHourlyForecast(hourlyForecastUrl){
+	console.log("Getting hourly forecast from weather.gov api.")
 	return new Promise((resolve, reject) => {
 		https.get(hourlyForecastUrl, weatherAPIcalloptions, (resp) => {
 			var data = ""
@@ -182,7 +189,7 @@ function getTodaysHourlyForecast(hourlyForecastUrl){
 			resp.on("end", () => {
 				var hourlyForecast = JSON.parse(data).properties.periods
 				var todaysHourlyForecast = []
-				for (var i = 0; i < 24; i++){
+				for (var i = 0; i < HOURS_IN_DAY; i++){
 					var simpleHourForecast = {
 						startTime: hourlyForecast[i].startTime,
 						endTime: hourlyForecast[i].endTime,
@@ -193,6 +200,28 @@ function getTodaysHourlyForecast(hourlyForecastUrl){
 					todaysHourlyForecast.push(simpleHourForecast)
 				}
 				resolve(todaysHourlyForecast)
+			})
+		}).on("error", (error) => {
+			reject(error)
+		})
+	})
+}
+
+
+
+function getTodaysTidalPredictions(){
+	console.log("Getting tidal predictions from noaa.gov api.")
+	return new Promise((resolve, reject) => {
+		tideAPIURL = "https://api.tidesandcurrents.noaa.gov/api/prod/datagetter?date=today&station=9435827&product=predictions&time_zone=lst&datum=MLLW&interval=hilo&units=english&application=OSUCS361FinalProject&format=json"
+		https.get(tideAPIURL, (resp) => {
+			var data = ""
+
+			resp.on("data", (chunk) => {
+				data += chunk
+			})
+
+			resp.on("end", () => {
+				resolve(JSON.parse(data))
 			})
 		}).on("error", (error) => {
 			reject(error)
