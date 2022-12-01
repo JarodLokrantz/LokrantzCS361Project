@@ -278,7 +278,7 @@ app.listen(port, function (){
 /**
  * Used to create a call to the relevant APIs at consistent intervals.
  */
- var dailyJobs = cron.job("*/5 * * * * *", async function (){
+ var dailyJobs = cron.job("1 0 * * *", async function (){
 	//save yesterday's data to the database
 	var queryString = getInsertQueryStringFromForecast(todaysForecast)
 	var dbbrokerreply = await queryDB(queryString)
