@@ -21,6 +21,9 @@ app.set("view engine", "handlebars")
 //Constant declarations
 const HOURS_IN_DAY = 24
 const MINUTES_BETWEEN_TIDAL_BULGES = 770 //12h 50m (6h 25m between tidal extremes)
+const SIX_AM_IN_MINUTES = 360
+const ELEVEN_AM_IN_MINUTES = 660
+const SIX_PM_IN_MINUTES = 1080
 
 //instanciate global forecast object with correct information for November 28, 2022. 
 //For all intents and purposes, this is dummy information so that the server starts out with a populated water temp prediction 
@@ -607,45 +610,129 @@ function getHourlyWaterTempObservations(){
  */
  function getActivityScores(date, WaterTemp, AirTemp, highTides, hour = -1){
 	activityScores = {
-		swimming: getSwimmingActivityScore(date, WaterTemp, AirTemp, highTides, hour),
-		surfing: getSurfingActivityScore(date, WaterTemp, AirTemp, highTides, hour),
-		scuba: getScubaActivityScore(date, WaterTemp, AirTemp, highTides, hour),
-		crabbing: getCrabbingActivityScore(date, WaterTemp, AirTemp, highTides, hour),
+		swimming: getSwimmingActivityScore(WaterTemp),
+		surfing: getSurfingActivityScore(WaterTemp, highTides, hour),
+		scuba: getScubaActivityScore(date, WaterTemp, highTides, hour),
+		crabbing: getCrabbingActivityScore(date, highTides, hour),
 		fishing: getFishingActivityScore(date, WaterTemp, AirTemp, highTides, hour),
-		clamming: getClammingActivityScore(date, WaterTemp, AirTemp, highTides, hour)
+		clamming: getClammingActivityScore(date, AirTemp, highTides, hour)
 	}
+	console.log(activityScores)
 	return activityScores
 }
 
 
 
-function getSwimmingActivityScore(date, WaterTemp, AirTemp, highTides, hour){
+function getSwimmingActivityScore(WaterTemp){
+	//Swimming comfortability is directly correlated with water temperature, all other metrics are not considered here.
+	if (WaterTemp >= 60){
+		return 2
+	} else if (WaterTemp >= 55){
+		return 1
+	}
 	return 0
 }
 
 
 
-function getSurfingActivityScore(date, WaterTemp, AirTemp, highTides, hour){
-	return 0
+function getSurfingActivityScore(WaterTemp, highTides, hour){
+	//the min value of this array will become the score for the scuba activity
+	var influenceArr = []
+
+	//date has no/redundant influence over the score
+
+	//determine the water temp's influence over the score
+	if (WaterTemp >= 60){
+		influenceArr.push(2)
+	} else {
+		influenceArr.push(1)
+	}
+
+	//air temp has no/redundant influence over the score
+
+	//determine the tides influence over the score
+	var morningHighTideExists = false
+	if (highTides[0] >= SIX_AM_IN_MINUTES && highTides[0] <= ELEVEN_AM_IN_MINUTES){
+		morningHighTideExists = true
+	}
+	if (morningHighTideExists && hour < 0){
+		influenceArr.push(2)
+	} else if (!morningHighTideExists && hour < 0){
+		influenceArr.push(1)
+	} else {
+		if (morningHighTideExists && (hour * 60) >= highTides[0] - 120 && (hour * 60) <= highTides[0] + 120){
+			influenceArr.push(2)
+		} else if (morningHighTideExists 
+					&& (hour * 60) >= highTides[0] - ((MINUTES_BETWEEN_TIDAL_BULGES / 2) / 2) 
+					&& (hour * 60) <= highTides[0] + ((MINUTES_BETWEEN_TIDAL_BULGES / 2) / 2)){
+			influenceArr.push(1)
+		} else if (!morningHighTideExists 
+					&& (hour * 60) >= highTides[0] - ((MINUTES_BETWEEN_TIDAL_BULGES / 2) / 2) 
+					&& (hour * 60) <= highTides[0] + ((MINUTES_BETWEEN_TIDAL_BULGES / 2) / 2)){
+			influenceArr.push(1)
+		} else if (!morningHighTideExists 
+					&& (hour * 60) >= highTides[1] - ((MINUTES_BETWEEN_TIDAL_BULGES / 2) / 2) 
+					&& (hour * 60) <= highTides[1] + ((MINUTES_BETWEEN_TIDAL_BULGES / 2) / 2)){
+			influenceArr.push(1)
+		} else {
+			influenceArr.push(0)
+		}
+	}
+	return Math.min(...influenceArr)
 }
 
 
 
-function getScubaActivityScore(date, WaterTemp, AirTemp, highTides, hour){
-	return 0
+function getScubaActivityScore(date, WaterTemp, highTides, hour){
+	//the min value of this array will become the score for the scuba activity
+	var influenceArr = []
+
+	//determine the date's influence over the score
+	var month = date.getMonth() + 1
+	if (month >= 5 && month <= 9){
+		influenceArr.push(2)
+	} else {
+		influenceArr.push(1)
+	}
+
+	//determine the water temp's influence over the score
+	if (WaterTemp >= 52){
+		influenceArr.push(2)
+	} else if (WaterTemp >= 45){
+		influenceArr.push(1)
+	} else {
+		influenceArr.push(0)
+	}
+
+	//air temp has no/redundant influence over the score
+
+	//determine the tide's influence over the score
+	influenceArr.push(getSlackwaterInfluence(highTides, hour))
+
+	return Math.min(...influenceArr)
 }
 
 
 
-function getCrabbingActivityScore(date, WaterTemp, AirTemp, highTides, hour){
+/**
+ * Gets the activity score for crabbing for a given time period with the conditions passed to the function in the parameters.
+ * @param {Date} date an object of the Date class that represents the date that contains the time period being analyzed
+ * @param {array} highTides an array of at most two numbers, representing the time of the high tides of the day containing the time period being analized. Units are minutes since midnight.
+ * @param {number} hour a number that represents the hour of the day to be analyzed. If the number is negative, the function will proceed as if it is analyzing the whole day.
+ * @returns an activity score that represents how "good" the activity would go if you did it during the time period being analyzed. 2 is good, 1 is okay, and 0 is bad
+ */
+function getCrabbingActivityScore(date, highTides, hour){
 	//the min value of this array will become the score for the crabbing activity
-	influenceArr = []
+	var influenceArr = []
 	
 	//determine the date's influence over the score
-	//if the month is jan, feb, mar, apr, sep, oct, nov, or dec, push a score of 
 	var month = date.getMonth() + 1
 	if (month <= 4 || month >= 9){
-		influenceArr.push(2)
+		if (month >= 10 && month <= 11){
+			influenceArr.push(0)	//new in 2022, crabbing is banned oct 15-nov 30
+		} else {
+			influenceArr.push(2)
+		}
 	} else if (month == 5){
 		influenceArr.push(1)
 	} else {
@@ -657,10 +744,151 @@ function getCrabbingActivityScore(date, WaterTemp, AirTemp, highTides, hour){
 	//air temp has no/redundant influence over the score
 
 	//determine the tide's influence over the score
-	if (hour < 0){
+	influenceArr.push(getSlackwaterInfluence(highTides, hour))
+	
+	return Math.min(...influenceArr)
+}
 
+
+
+function getFishingActivityScore(date, WaterTemp, AirTemp, highTides, hour){
+	//the min value of this array will become the score for the crabbing activity
+	var influenceArr = []
+
+	//determine the date's influence on the score
+	var month = date.getMonth() + 1
+	if (month >= 5 && month <= 10){
+		influenceArr.push(2)
 	} else {
-		isInSlackWater = false
+		influenceArr.push(1)
+	}
+
+	//water temp has no/redundant influence on the score
+
+	//determine the air temp's influence on the score
+	if (AirTemp >= 70){
+		influenceArr.push(2)
+	} else if (AirTemp >= 33){
+		influenceArr.push(1)
+	} else {
+		influenceArr.push(0)
+	}
+
+	//determine the tide's influence on the score
+	var slackWaterInfluence = getSlackwaterInfluence(highTides, hour)
+	if (hour < 0){
+		if (slackWaterInfluence <= 1){
+			slackWaterInfluence = 1
+		} else {
+			slackWaterInfluence = 0
+		}
+	} else {
+		if (slackWaterInfluence > 0){
+			slackWaterInfluence = 0
+		} else {
+			slackWaterInfluence = 2
+		}
+	}
+	influenceArr.push(slackWaterInfluence)
+	
+	return Math.min(...influenceArr)
+}
+
+
+
+function getClammingActivityScore(date, AirTemp, highTides, hour){
+	//the min value of this array will become the score for the crabbing activity
+	var influenceArr = []
+
+	//determine the date's influence on the score
+	var month = date.getMonth() + 1
+	if (month >= 7 && month <= 9){
+		influenceArr.push(0)
+	} else {
+		influenceArr.push(2)
+	}
+
+	//water temp has no/redundant influence on the score
+
+	//determine the air temp's influence on the score
+	if (AirTemp >= 70){
+		influenceArr.push(2)
+	} else if (AirTemp >= 33){
+		influenceArr.push(1)
+	} else {
+		influenceArr.push(0)
+	}
+
+	//determine the tide's influence on the score
+	if (hour < 0){
+		influenceArr.push(2)
+	} else {
+		lowTides = []
+		for (var i = 0; i < highTides.length; i++){
+			if (highTides[i] - (MINUTES_BETWEEN_TIDAL_BULGES / 2) > 0){
+				lowTides.push(highTides[i] - (MINUTES_BETWEEN_TIDAL_BULGES / 2))
+			}
+			if (highTides[i] + (MINUTES_BETWEEN_TIDAL_BULGES / 2) < (HOURS_IN_DAY * 60)){
+				lowTides.push(highTides[i] + (MINUTES_BETWEEN_TIDAL_BULGES / 2))
+			}
+		}
+		lowTides = [...new Set(lowTides)]
+
+		var hourIsDuringLowTide = false
+		for (var i = 0; i < lowTides.length; i++){
+			if ((hour * 60) >= lowTides[i] - ((MINUTES_BETWEEN_TIDAL_BULGES / 2) / 2) 
+				&& (hour * 60) <= lowTides[i] + ((MINUTES_BETWEEN_TIDAL_BULGES / 2) / 2)){
+				
+				hourIsDuringLowTide = true
+				break
+			}
+		}
+		if (hourIsDuringLowTide){
+			influenceArr.push(2)
+		} else {
+			influenceArr.push(1)
+		}
+	}
+
+	return Math.min(...influenceArr)
+}
+
+
+
+function getSlackwaterInfluence(highTides, hour){
+	var influenceScore = 0
+	if (hour < 0){
+		var numSlackWaterInDaylight = 0
+		var todaysTidalPeaks = []
+		todaysTidalPeaks.push(...highTides)
+		
+		//calculate the low tides around the high tides and add them to the array.
+		for (var i = 0; i < highTides.length; i++){
+			if (highTides[i] - (MINUTES_BETWEEN_TIDAL_BULGES / 2) > 0){
+				todaysTidalPeaks.push(highTides[i] - (MINUTES_BETWEEN_TIDAL_BULGES / 2))
+			}
+			if (highTides[i] + (MINUTES_BETWEEN_TIDAL_BULGES / 2) < (HOURS_IN_DAY * 60)){
+				todaysTidalPeaks.push(highTides[i] + (MINUTES_BETWEEN_TIDAL_BULGES / 2))
+			}
+		}
+
+		//remove duplicates
+		todaysTidalPeaks = [...new Set(todaysTidalPeaks)]
+
+		//count slackwaters that are partially or wholly between 6am and 6pm
+		for (var i = 0; i < todaysTidalPeaks.length; i++){
+			if ((todaysTidalPeaks[i] - 60) >= SIX_AM_IN_MINUTES && (todaysTidalPeaks[i] - 60) <= SIX_PM_IN_MINUTES){
+				numSlackWaterInDaylight += 1
+			} else if ((todaysTidalPeaks[i] + 60) >= SIX_AM_IN_MINUTES && (todaysTidalPeaks[i] + 60) <= SIX_PM_IN_MINUTES){
+				numSlackWaterInDaylight += 1
+			}
+		}
+
+		//Number of slackwaters minus one is the influence because there can only be two or three whole/partial slackwaters during daylight.
+		//Three is rare though
+		influenceScore = numSlackWaterInDaylight - 1
+	} else {
+		var isInSlackWater = false
 		for (var i = 0; i < highTides.length; i++){
 			//calculate the low tides around the high tide
 			lowTides = []
@@ -674,33 +902,21 @@ function getCrabbingActivityScore(date, WaterTemp, AirTemp, highTides, hour){
 			//slack water is approximately an hour before and after high and low tide
 			if ((hour * 60) >= highTides[i] - 60 && (hour * 60) <= highTides[i] + 60){
 				isInSlackWater = true
-				influenceArr.push(2)
+				influenceScore = 2
 				break
 			} else {
 				for (var j = 0; j < lowTides.length; j++){
 					if((hour * 60) >= lowTides[i] - 60 && (hour * 60) <= lowTides[i] + 60){
 						isInSlackWater = true
-						influenceArr.push(1)
+						influenceScore = 1
 						break
 					}
 				}
 			}
 		}
 		if (!isInSlackWater){
-			influenceArr.push(0)
+			influenceScore = 0
 		}
 	}
-	return Math.min(...influenceArr)
-}
-
-
-
-function getFishingActivityScore(date, WaterTemp, AirTemp, highTides, hour){
-	return 0
-}
-
-
-
-function getClammingActivityScore(date, WaterTemp, AirTemp, highTides, hour){
-	return 0
+	return influenceScore
 }
