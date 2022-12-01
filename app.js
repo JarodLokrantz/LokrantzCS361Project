@@ -279,7 +279,7 @@ app.listen(port, function (){
  * Used to create a call to the relevant APIs at consistent intervals.
  */
  var dailyJobs = cron.job("*/5 * * * * *", async function (){
-	/* //save yesterday's data to the database
+	//save yesterday's data to the database
 	var queryString = getInsertQueryStringFromForecast(todaysForecast)
 	var dbbrokerreply = await queryDB(queryString)
 	
@@ -292,7 +292,7 @@ app.listen(port, function (){
 	// console.log(todaysTidalPredictions)
 	
 	//update the daily forecast with new predictions
-	resetDailyForecast(todaysHourlyForecast, todaysTidalPredictions) */
+	resetDailyForecast(todaysHourlyForecast, todaysTidalPredictions)
 
 	//update individual hours' scores for different activities
 	var peakHighTide = getPeakHighTideTime(todaysForecast.tidalPredictions)
@@ -406,15 +406,6 @@ function getInsertQueryStringFromForecast(forecastObj){
 	queryString = queryString + avgAirTemp + ","
 
 	//append peak high tide time of tidalPredictions in forecastObj to query
-	/* var highestTideIdx = 0
-	for (var i = 1; i < forecastObj.tidalPredictions.length; i++){
-		var candidate = parseFloat(forecastObj.tidalPredictions[i].v)
-		var previous = parseFloat(forecastObj.tidalPredictions[highestTideIdx].v)
-		if (candidate >= previous){
-			highestTideIdx = i
-		}
-	}
-	var peakHighTide = forecastObj.tidalPredictions[highestTideIdx].t.split(" ")[1] */
 	var peakHighTide = getPeakHighTideTime(forecastObj.tidalPredictions)
 	queryString = queryString + peakHighTide
 
@@ -614,15 +605,19 @@ function getHourlyWaterTempObservations(){
 		surfing: getSurfingActivityScore(WaterTemp, highTides, hour),
 		scuba: getScubaActivityScore(date, WaterTemp, highTides, hour),
 		crabbing: getCrabbingActivityScore(date, highTides, hour),
-		fishing: getFishingActivityScore(date, WaterTemp, AirTemp, highTides, hour),
+		fishing: getFishingActivityScore(date, AirTemp, highTides, hour),
 		clamming: getClammingActivityScore(date, AirTemp, highTides, hour)
 	}
-	console.log(activityScores)
 	return activityScores
 }
 
 
 
+/**
+ * Gets the activity score of the swimming activity based on the conditions passed through the parameters
+ * @param {number} WaterTemp a number that is the water temperature of the time period being analyzed
+ * @returns a number representing the activity score of the swimming activity
+ */
 function getSwimmingActivityScore(WaterTemp){
 	//Swimming comfortability is directly correlated with water temperature, all other metrics are not considered here.
 	if (WaterTemp >= 60){
@@ -634,7 +629,13 @@ function getSwimmingActivityScore(WaterTemp){
 }
 
 
-
+/**
+ * Gets the activity score of the surfing activity based on the conditions passed through the parameters
+ * @param {*} WaterTemp a number that is the water temperature of the time period being analyzed
+ * @param {*} highTides an array that represents the high tides of the day as the number of minutes since midnight
+ * @param {*} hour a number that represents the hour of the day to be analyzed. If the number is negative, the function will proceed as if it is analyzing the whole day.
+ * @returns a number representing the activity score of the surfing activity
+ */
 function getSurfingActivityScore(WaterTemp, highTides, hour){
 	//the min value of this array will become the score for the scuba activity
 	var influenceArr = []
@@ -683,6 +684,14 @@ function getSurfingActivityScore(WaterTemp, highTides, hour){
 
 
 
+/**
+ * Gets the activity score of the scuba activity based on the conditions passed through the parameters
+ * @param {*} date an object of the Date class that represents the date that contains the time period being analyzed
+ * @param {*} WaterTemp a number that is the water temperature of the time period being analyzed
+ * @param {*} highTides an array that represents the high tides of the day as the number of minutes since midnight
+ * @param {*} hour a number that represents the hour of the day to be analyzed. If the number is negative, the function will proceed as if it is analyzing the whole day.
+ * @returns a number representig the activity score of the scuba activity
+ */
 function getScubaActivityScore(date, WaterTemp, highTides, hour){
 	//the min value of this array will become the score for the scuba activity
 	var influenceArr = []
@@ -751,7 +760,15 @@ function getCrabbingActivityScore(date, highTides, hour){
 
 
 
-function getFishingActivityScore(date, WaterTemp, AirTemp, highTides, hour){
+/**
+ * Gets the activity score of the fishing activity based on the conditions passed through the parameters
+ * @param {*} date a Date object that is representative of the current date being analyzed
+ * @param {*} AirTemp a number that is the air temperature of the time period being analyzed
+ * @param {*} highTides an array of at most two numbers, representing the time of the high tides of the day containing the time period being analized. Units are minutes since midnight.
+ * @param {*} hour a number representing the current hour. Function proceeds as if analyzing a whole day if hour is negative.
+ * @returns a number representing the activity score of the fishing activity
+ */
+function getFishingActivityScore(date, AirTemp, highTides, hour){
 	//the min value of this array will become the score for the crabbing activity
 	var influenceArr = []
 
@@ -795,7 +812,14 @@ function getFishingActivityScore(date, WaterTemp, AirTemp, highTides, hour){
 }
 
 
-
+/**
+ * Gets the activity score for the clamming activity based on the conditions passed through the parameters
+ * @param {Date} date a Date object that is representative of the current date being analyzed
+ * @param {number} AirTemp a number that is the air temperature of the time period being analyzed
+ * @param {array} highTides an array of at most two numbers, representing the time of the high tides of the day containing the time period being analized. Units are minutes since midnight.
+ * @param {number} hour a number representing the current hour. Function proceeds as if analyzing a whole day if hour is negative.
+ * @returns a number representing the activity score of the clamming activity based on the conditions passed to the function.
+ */
 function getClammingActivityScore(date, AirTemp, highTides, hour){
 	//the min value of this array will become the score for the crabbing activity
 	var influenceArr = []
@@ -854,7 +878,12 @@ function getClammingActivityScore(date, AirTemp, highTides, hour){
 }
 
 
-
+/**
+ * Gets the tide's influence on the score for activities that take into account slackwater.
+ * @param {array} highTides an array of at most two numbers, representing the time of the high tides of the day containing the time period being analized. Units are minutes since midnight.
+ * @param {number} hour a number representing the current hour. Function proceeds as if analyzing a whole day if hour is negative.
+ * @returns a number representing the influence of the tides on the activity based on proximity to slackwater.
+ */
 function getSlackwaterInfluence(highTides, hour){
 	var influenceScore = 0
 	if (hour < 0){
