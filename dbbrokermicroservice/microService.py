@@ -58,8 +58,8 @@ else:
     conn = sqlite3.connect("data.db")
     cur = conn.cursor()
     cur.execute("CREATE TABLE weather(date, water_temp, air_temp, first_peak_time)")
-    cur.execute("INSERT INTO weather VALUES ('07-31-2022', 80, 95, '16:00'),"
-                " ('08-01-2022', 95, 80, '17:00'), ('06-15-2022', 70, 80, '12:00')")
+    cur.execute("INSERT INTO weather VALUES ('11-27-2022', 49, 44, '16:35'),"
+                " ('11-28-2022', 49, 46, '15:45'), ('11-29-2022', 49, 41, '14:55')")
     conn.commit()
 
 
