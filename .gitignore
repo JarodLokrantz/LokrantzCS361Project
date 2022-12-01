@@ -3,4 +3,3 @@ microservice/natureWalkDataResponse.txt
 microservice/outdated-natureWalkData.csv
 node_modules
 .vscode
-data.db

@@ -7,17 +7,14 @@
     <title>{{pageTitle}}</title>
     <link rel="stylesheet" href="/style.css" media="screen">
 
-    {{!-- Logo for browser tab --}}
-    {{!-- <link rel="shortcut icon" type="image/x-icon" href="/img/skull-emojji.ico" /> --}}
-
     {{!-- Handlebars --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.runtime.js"
         integrity="sha512-0bRnmqp8jww8h5q9khSJSMF7kUFVuzAiVpbwCr1+kot0yAwtVukdBQGznIvytgpFzy6wEgFbjbNSO2xcSBHTWA=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
-    {{!-- {{#each requiredScripts}}
+    {{#each requiredScripts}}
     <script src="{{requiredScript}}" charset="utf-8" {{#if needsDeferment}}defer{{/if}}></script>
-    {{/each}} --}}
+    {{/each}}
 </head>
 
 <body>

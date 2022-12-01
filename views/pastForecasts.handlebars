@@ -1,0 +1,28 @@
+{{> header}}
+
+<main>
+	<div class="page-title-and-date">
+		<h2>Past Forecasts</h2>
+	</div>
+	<select id="past-activity-selector">
+		{{#each activities}}
+		<option value="{{name}}">{{name}}</option>
+		{{/each}}
+	</select>
+	<table id="past-forecast-table">
+		<tr>
+			<th>Date</th>
+			<th>Average Air Temperature</th>
+			<th>Average Water Temperature</th>
+			<th>Peak High Tide</th>
+		</tr>
+		{{#each days}}
+		<tr class="past-forecast-table-row swimming-score-{{swimmingScore}} surfing-score-{{surfingScore}} scubaing-score-{{scubaScore}} crabbing-score-{{crabbingScore}} fishing-score-{{fishingScore}} clamming-score-{{clammingScore}}">
+			<td>{{date}}</td>
+			<td>{{airTemp}}</td>
+			<td>{{waterTemp}}</td>
+			<td>{{peakHighTide}}</td>
+		</tr>
+		{{/each}}
+	</table>
+</main>

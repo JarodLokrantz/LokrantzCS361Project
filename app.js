@@ -24,25 +24,14 @@ const MINUTES_BETWEEN_TIDAL_BULGES = 770 //12h 50m (6h 25m between tidal extreme
 const SIX_AM_IN_MINUTES = 360
 const ELEVEN_AM_IN_MINUTES = 660
 const SIX_PM_IN_MINUTES = 1080
+const ACTIVITIES = [{name: "Swimming"}, {name: "Surfing"}, {name: "Scubaing"}, {name: "Crabbing"}, {name: "Fishing"}, {name: "Clamming"}]
+const FIRST_DATE_STORED = new Date("November 27, 2022")
 
-//instanciate global forecast object with correct information for November 28, 2022. 
-//For all intents and purposes, this is dummy information so that the server starts out with a populated water temp prediction 
+//instanciate global forecast object with correct information for the date and time the server starts. 
 todaysForecast = {
-	date: new Date('November 28, 2022'),
+	date: new Date('November 30, 2022'),
 	hourlyForecast: [
 		{
-			temperature: 46
-		},
-		{
-			temperature: 45
-		},
-		{
-			temperature: 45
-		},
-		{
-			temperature: 45
-		},
-		{
 			temperature: 45
 		},
 		{
@@ -58,37 +47,13 @@ todaysForecast = {
 			temperature: 46
 		},
 		{
-			temperature: 47
+			temperature: 46
 		},
 		{
 			temperature: 46
 		},
 		{
-			temperature: 47
-		},
-		{
-			temperature: 47
-		},
-		{
 			temperature: 46
-		},
-		{
-			temperature: 45
-		},
-		{
-			temperature: 45
-		},
-		{
-			temperature: 45
-		},
-		{
-			temperature: 45
-		},
-		{
-			temperature: 46
-		},
-		{
-			temperature: 47
 		},
 		{
 			temperature: 46
@@ -101,163 +66,235 @@ todaysForecast = {
 		},
 		{
 			temperature: 45
+		},
+		{
+			temperature: 46
+		},
+		{
+			temperature: 46
+		},
+		{
+			temperature: 45
+		},
+		{
+			temperature: 43
+		},
+		{
+			temperature: 45
+		},
+		{
+			temperature: 45 //
+		},
+		{
+			temperature: 44
+		},
+		{
+			temperature: 43
+		},
+		{
+			temperature: 41
+		},
+		{
+			temperature: 40
+		},
+		{
+			temperature: 40
+		},
+		{
+			temperature: 40
 		}
 	],
-	tidalPredictions: [
+	tidalPredictions:[
 		{
-			t: "2022-11-28 4:52",
-			v: "7.302"
+			t: "2022-11-30 05:53",
+			v: "7.469"
 		}, 
 		{
-			t: "2022-11-28 10:07",
-			v: "4.051"
+			t: "2022-11-30 11:32",
+			v: "3.746"
 		}, 
 		{
-			t: "2022-11-28 15:45",
-			v: "7.928"
+			t: "2022-11-30 17:03",
+			v: "7.153"
 		}, 
 		{
-			t: "2022-11-28 22:52",
-			v: "-0.205"
+			t: "2022-11-30 23:53",
+			v: "0.494"
 		}
 	],
 	waterTempObservations: [
 		{
-			t: "2022-11-28 00:00",
-			v: "46.9"
+			t: "2022-11-30 00:00",
+			v: "47.7"
 		}, 
 		{
-			t: "2022-11-28 01:00",
-			v: "47.1"
-		}, 
-		{
-			t: "2022-11-28 02:00",
-			v: "48.0"
-		}, 
-		{
-			t: "2022-11-28 03:00",
-			v: "49.5"
-		}, 
-		{
-			t: "2022-11-28 04:00",
-			v: "50.2"
-		}, 
-		{
-			t: "2022-11-28 05:00",
-			v: "50.4"
-		}, 
-		{
-			t: "2022-11-28 06:00",
-			v: "50.4"
-		}, 
-		{
-			t: "2022-11-28 07:00",
-			v: "50.4"
-		}, 
-		{
-			t: "2022-11-28 08:00",
-			v: "50.2"
-		}, 
-		{
-			t: "2022-11-28 09:00",
-			v: "48.6"
-		}, 
-		{
-			t: "2022-11-28 10:00",
-			v: "49.1"
-		}, 
-		{
-			t: "2022-11-28 11:00",
-			v: "49.1"
-		}, 
-		{
-			t: "2022-11-28 12:00",
-			v: "48.0"
-		}, 
-		{
-			t: "2022-11-28 13:00",
-			v: "48.7"
-		}, 
-		{
-			t: "2022-11-28 14:00",
-			v: "49.3"
-		}, 
-		{
-			t: "2022-11-28 15:00",
-			v: "49.8"
-		}, 
-		{
-			t: "2022-11-28 16:00",
-			v: "50.0"
-		}, 
-		{
-			t: "2022-11-28 17:00",
-			v: "50.0"
-		}, 
-		{
-			t: "2022-11-28 18:00",
-			v: "50.0"
-		}, 
-		{
-			t: "2022-11-28 19:00",
-			v: "49.8"
-		}, 
-		{
-			t: "2022-11-28 20:00",
-			v: "48.7"
-		}, 
-		{
-			t: "2022-11-28 21:00",
-			v: "48.3"
-		}, 
-		{
-			t: "2022-11-28 22:00",
+			t: "2022-11-30 01:00",
 			v: "47.5"
 		}, 
 		{
-			t: "2022-11-28 23:00",
-			v: "46.9"
+			t: "2022-11-30 02:00",
+			v: "47.5"
+		}, 
+		{
+			t: "2022-11-30 03:00",
+			v: "48.2"
+		}, 
+		{
+			t: "2022-11-30 04:00",
+			v: "49.5"
+		}, 
+		{
+			t: "2022-11-30 05:00",
+			v: "49.8"
+		}, 
+		{
+			t: "2022-11-30 06:00",
+			v: "50.0"
+		}, 
+		{
+			t: "2022-11-30 07:00",
+			v: "50.0"
+		}, 
+		{
+			t: "2022-11-30 08:00",
+			v: "50.0"
+		}, 
+		{
+			t: "2022-11-30 09:00",
+			v: "49.8"
+		}, 
+		{
+			t: "2022-11-30 10:00",
+			v: "48.6"
+		}, 
+		{
+			t: "2022-11-30 11:00",
+			v: "48.4"
+		}, 
+		{
+			t: "2022-11-30 12:00",
+			v: "48.2"
+		}, 
+		{
+			t: "2022-11-30 13:00",
+			v: "48.6"
+		}, 
+		{
+			t: "2022-11-30 14:00",
+			v: "48.6"
+		}, 
+		{
+			t: "2022-11-30 15:00",
+			v: "48.6"
+		}, 
+		{
+			t: "2022-11-30 16:00",
+			v: "49.5"
+		}, 
+		{
+			t: "2022-11-30 17:00",
+			v: "50.0"
+		}, 
+		{
+			t: "2022-11-30 18:00",
+			v: "50.0"
+		}, 
+		{
+			t: "2022-11-30 19:00",
+			v: "49.8"
+		}, 
+		{
+			t: "2022-11-30 20:00",
+			v: "49.5"
+		}, 
+		{
+			t: "2022-11-30 21:00",
+			v: "49.3"
+		}, 
+		{
+			t: "2022-11-30 22:00",
+			v: "48.4"
+		}, 
+		{
+			t: "2022-11-30 23:00",
+			v: "47.3"
 		}
 	],
 	currentHour: 23,
 	hours: []
 }
 
+//initialize hours array of todaysForecast
+var peakHighTide = getPeakHighTideTime(todaysForecast.tidalPredictions)
+var highTides = getHighTidesArray(peakHighTide)
+for (var i = 0; i < HOURS_IN_DAY; i++){
+	var currHourWaterTemp = parseFloat(todaysForecast.waterTempObservations[i].v)
+	var currHourAirTemp = todaysForecast.hourlyForecast[i].temperature
+	// todaysForecast.hours[i] = getActivityScores(todaysForecast.date, currHourWaterTemp, currHourAirTemp, highTides, i)
+	todaysForecast.hours.push(getActivityScores(todaysForecast.date, currHourWaterTemp, currHourAirTemp, highTides, i))
+}
+
 
 /**
  * Express server middleware functions
  */
-//serve plaintext files from public directory
-app.use(express.static(__dirname + "/public"))
 
 //log all requests to the server
 app.use(function (req, res, next){
 	console.log("Request recieved")
 	console.log("Method: " + req.method)
 	console.log("URL: " + req.url)
-	console.log("Headers: " + req.headers)
-
+	
 	next()
 })
 
+
+//serve plaintext files from public directory
+app.use(express.static(__dirname + "/public"))
+
+
 //Render homepage. Does not pass to any other middleware function.
-app.get("/", async function(req, res, next){
-	var receivedData = null
-	try {
-		// receivedData = await queryDB("GETONDATE,07-31-2022,07-31-2022")
-		receivedData = await queryDB("INSERT,11-28-2022,80,90,15:00")
-		// receivedData = await queryDB("GETONDATE,11-28-2022,11-28-2022")
-	} catch (error){
-		res.status(500).send(error)
-		return
-	}
-	console.log(receivedData.toString())
+app.get("/", function(req, res, next){
+	var dateFormattingOptions = {weekday: "long", year: "numeric", month: "long", day: "numeric"}
 	res.status(200).render("homepage", {
-		data: receivedData,
-		pageTitle: "Homepage",
-		date: getTodaysDate()
+		pageTitle: "Water Activities Homepage",
+		currentHour: todaysForecast.currentHour,
+		date: todaysForecast.date.toLocaleDateString("en-US", dateFormattingOptions),
+		hours: transformHourlyDataForFrontEnd(todaysForecast),
+		activities: ACTIVITIES,
+		requiredScripts: [
+			{
+				requiredScript: "/index.js",
+				needsDeferment: true
+			}
+		]
 	})
 })
+
+
+
+app.get("/pastForecasts", async function (req, res, next){
+	res.status(200).render("pastForecasts", {
+		pageTitle: "Water Activities Homepage",
+		days: await getStoredDaysFromDB(),
+		activities: ACTIVITIES,
+		requiredScripts: [
+			{
+				requiredScript: "/pastForecasts.js",
+				needsDeferment: true
+			}
+		]
+	})
+})
+
+
+app.get("/tipsAndRules", function (req, res, next){
+	res.status(200).render("tipsAndRules", {
+		pageTitle: "Water Activities Tips and Rules",
+		requiredScripts: []
+	})
+})
+
 
 
 
@@ -275,6 +312,91 @@ app.listen(port, function (){
  */
 
 
+
+async function getStoredDaysFromDB(){
+	//query db for all entries
+	var queryTerm = "GETONDATE," 
+	var today = new Date()
+	queryTerm = queryTerm + getDateString(FIRST_DATE_STORED) + ","
+	queryTerm = queryTerm + getDateString(today)
+	var results = await queryDB(queryTerm)
+
+	//create array of js objects out of results
+	results = results.toString()
+	results = results.replaceAll("[(", "")
+	results = results.replaceAll(")]", "")
+	results = results.split("), (")
+	for (var i = 0; i < results.length; i++){
+		entryAttributes = results[i].split(", ")
+		
+		//build entry
+		entry = {
+			date: entryAttributes[0].replaceAll("'", ""),
+			waterTemp: parseInt(entryAttributes[1]),
+			airTemp: parseInt(entryAttributes[2]),
+			peakHighTide: entryAttributes[3].replaceAll("'", "")
+		}
+		
+		//get date object of the same date
+		entryDate = new Date()
+		dateParts = entry.date.split("-")
+		entryDate.setFullYear(parseInt(dateParts[2]))
+		entryDate.setMonth(parseInt(dateParts[0]) - 1)
+		entryDate.setDate(parseInt(dateParts[1]))
+
+		var highTides = getHighTidesArray(entry.peakHighTide)
+
+		//get activity score for the day and build the rest of entry
+		activityScores = getActivityScores(entryDate, entry.waterTemp, entry.airTemp, highTides, -1)
+		entry.swimmingScore = activityScores.swimming
+		entry.surfingScore = activityScores.surfing
+		entry.scubaScore = activityScores.scuba
+		entry.crabbingScore = activityScores.crabbing
+		entry.fishingScore = activityScores.fishing
+		entry.clammingScore = activityScores.clamming
+
+		results[i] = entry
+	}
+	return results
+}
+
+
+
+/**
+ * Transforms todaysForecast object into an array that can be used by handlebars in an efficient way
+ * @param {Object} forecastObj Intended only to be used with todaysForecast object
+ * @returns {array} an array of js objects that can be used by handlebars to render the homepage
+ */
+function transformHourlyDataForFrontEnd(forecastObj){
+	var hourArr = []
+	for (var i = 0; i < HOURS_IN_DAY; i++){
+		hour = {}
+		hour.airTemp = forecastObj.hourlyForecast[i].temperature
+		hour.waterTemp = forecastObj.waterTempObservations[i].v
+		hour.swimmingScore = forecastObj.hours[i].swimming
+		hour.surfingScore = forecastObj.hours[i].surfing
+		hour.scubaScore = forecastObj.hours[i].scuba
+		hour.crabbingScore = forecastObj.hours[i].crabbing
+		hour.fishingScore = forecastObj.hours[i].fishing
+		hour.clammingScore = forecastObj.hours[i].clamming
+		if (i == forecastObj.currentHour){
+			hour.isCurrentHour = true
+		} else {
+			hour.isCurrentHour = false
+		}
+		if (i <= forecastObj.currentHour){
+			hour.isWaterTempPrediction = false
+		} else {
+			hour.isWaterTempPrediction = true
+		}
+
+		hourArr.push(hour)
+	}
+	return hourArr
+}
+
+
+
 /**
  * Used to create a call to the relevant APIs at consistent intervals.
  */
@@ -285,11 +407,11 @@ app.listen(port, function (){
 	
 	//get new predictions from the apis
 	var hourlyForecastUrl = await getHourlyForecastUrl()
-	// console.log(hourlyForecastUrl)
+	console.log(hourlyForecastUrl)
 	var todaysHourlyForecast = await getTodaysHourlyForecast(hourlyForecastUrl)
-	// console.log(todaysHourlyForecast)
+	console.log(todaysHourlyForecast)
 	var todaysTidalPredictions = await getTodaysTidalPredictions()
-	// console.log(todaysTidalPredictions)
+	console.log(todaysTidalPredictions)
 	
 	//update the daily forecast with new predictions
 	resetDailyForecast(todaysHourlyForecast, todaysTidalPredictions)
@@ -300,7 +422,8 @@ app.listen(port, function (){
 	for (var i = 0; i < HOURS_IN_DAY; i++){
 		var currHourWaterTemp = parseFloat(todaysForecast.waterTempObservations[i].v)
 		var currHourAirTemp = todaysForecast.hourlyForecast[i].temperature
-		todaysForecast.hours[i] = getActivityScores(todaysForecast.date, currHourWaterTemp, currHourAirTemp, highTides, i)
+		// todaysForecast.hours[i] = getActivityScores(todaysForecast.date, currHourWaterTemp, currHourAirTemp, highTides, i)
+		todaysForecast.hours.push(getActivityScores(todaysForecast.date, currHourWaterTemp, currHourAirTemp, highTides, i))
 	}
 })
 var hourlyJobs = cron.job("25 * * * *", async function (){
@@ -310,6 +433,13 @@ var hourlyJobs = cron.job("25 * * * *", async function (){
 	var numObservations = todaysWaterTempObservations.length
 	todaysForecast.waterTempObservations[numObservations - 1] = todaysWaterTempObservations[numObservations - 1]
 	todaysForecast.currentHour = numObservations - 1
+
+	//update the current hour's activity scores because of the updated water temperature observation
+	var peakHighTide = getPeakHighTideTime(todaysForecast.tidalPredictions)
+	var highTides = getHighTidesArray(peakHighTide)
+	var currHourWaterTemp = parseFloat(todaysForecast.waterTempObservations[numObservations - 1].v)
+	var currHourAirTemp = todaysForecast.hourlyForecast[numObservations - 1].temperature
+	todaysForecast.hours[numObservations - 1] = getActivityScores(todaysForecast.date, currHourWaterTemp, currHourAirTemp, highTides, todaysForecast.currentHour)
 })
 dailyJobs.start()
 hourlyJobs.start()
@@ -342,7 +472,8 @@ function queryDB(queryTerm){
 			console.log("Connected to db broker microservice")
 		})
 		client.on("data", function (data){
-			client.destroy()
+			// client.destroy()
+			client.end()
 			console.log(data.toString())
 			resolve(data)
 		})

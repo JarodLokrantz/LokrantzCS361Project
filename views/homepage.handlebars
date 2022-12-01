@@ -1,6 +1,28 @@
 {{> header}}
 
 <main>
-	<p>{{date}}</p>
-	<p>{{data}}</p>
+	<div class="page-title-and-date">
+		<h2>Today's Hourly Forecast</h2>
+		<h3>{{date}}</h3>
+	</div>
+	<select id="today-activity-selector">
+		{{#each activities}}
+		<option value="{{name}}">{{name}}</option>
+		{{/each}}
+	</select>
+	<table id="hourly-forecast-table">
+		<tr>
+			<th>Hour</th>
+			<th>Air Temperature</th>
+			<th>Water Temperature</th>
+		</tr>
+		{{#each hours}}
+		<tr class="hourly-forecast-table-row swimming-score-{{swimmingScore}} surfing-score-{{surfingScore}} scubaing-score-{{scubaScore}} crabbing-score-{{crabbingScore}} fishing-score-{{fishingScore}} clamming-score-{{clammingScore}}" {{#if isCurrentHour}}id="current-hour-row"{{/if}}>
+			<td>{{@index}}:00</td>
+			<td>{{airTemp}}&#176;F</td>
+			<td {{#if isWaterTempPrediction}}class="water-temp-prediction"{{/if}}>{{waterTemp}}</td>
+		</tr>
+		{{/each}}
+	</table>
+	<p>These ratings are aggregate for the whole Oregon coast only and do not take every aspect of your safety or your experience into account. Research more about what is safe for your experience level when planning to do activities that involve the ocean.</p>
 </main>

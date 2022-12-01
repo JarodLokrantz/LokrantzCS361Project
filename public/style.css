@@ -1,0 +1,68 @@
+body {
+	background-color: #dedede;
+	margin: 0;
+	padding: 0 0 1% 0
+}
+
+header h1 {
+	background-color: #ffffff;
+	margin: 0;
+	padding: 0.5% 2%;
+}
+
+a {
+	text-decoration: none;
+}
+
+a {
+	color: #343434;
+}
+
+a:hover, a:focus {
+	color: #343434;
+}
+
+a:focus {
+	outline: none;
+}
+
+nav {
+	background-color: #eeeeee;
+}
+
+nav ul {
+	padding: 0.5% 1%;
+	margin: 0;
+}
+
+nav ul li {
+	display: inline-block;
+	padding: 0 1.5%;
+}
+
+main {
+	margin: 0% 5%;
+}
+
+.page-title-and-date * {
+	display: inline-block;
+	margin: 0.5% 0;
+}
+
+.page-title-and-date h3 {
+	float: right;
+}
+
+table, th, td {
+	border: 1px solid black;
+	border-collapse: collapse;
+	text-align: center;
+}
+
+.water-temp-prediction {
+	font-style: italic;
+}
+
+#current-hour-row {
+	font-weight: bolder;
+}
